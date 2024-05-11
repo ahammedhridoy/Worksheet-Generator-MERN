@@ -33,7 +33,6 @@ const AddQuestion = () => {
     categoryId: null,
     subcategoryId: null,
     filterlevel: "",
-    image: "",
   });
 
   const formData = new FormData();
@@ -44,7 +43,6 @@ const AddQuestion = () => {
   formData.append("categoryId", createQuestion.categoryId);
   formData.append("subcategoryId", createQuestion.subcategoryId);
   formData.append("filterlevel", createQuestion.filterlevel);
-  formData.append("image", createQuestion.image ? createQuestion.image : "");
 
   const [loading, setLoading] = useState(false);
   const [categoryState, setCategoryState] = useState(""); // our category state

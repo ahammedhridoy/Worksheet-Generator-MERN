@@ -33,10 +33,13 @@ class QuestionController {
       subcategoryId,
       filterlevel,
     } = req.body;
-    const filename = req?.file?.filename;
-    const fileUrl = path.join(filename);
+
+    if (req?.file?.filename) {
+      var fileUrl = path.join(req.file.filename);
+    } else {
+      const fileUrl = null; // Or ""
+    }
     const catid = parseInt(categoryId);
-    // Validate if all required fields are present
     if (!question || !answer || !solution) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -49,9 +52,9 @@ class QuestionController {
           answer,
           solution,
           categoryId: catid,
-          subcategoryId,
+          subcategoryId: Number(subcategoryId),
           filterlevel,
-          image: fileUrl ? fileUrl : null,
+          image: fileUrl,
         },
       });
       res.status(201).json({

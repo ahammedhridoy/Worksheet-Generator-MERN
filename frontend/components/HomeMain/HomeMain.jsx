@@ -22,7 +22,6 @@ const HomeMain = () => {
     handleReset,
     imageUrl,
   } = useContext(QuestionContext);
-  console.log(filteredQuestions);
 
   const handleCheckboxChange = (index, checked) => {
     setQuestions((prevState) => {
@@ -51,7 +50,6 @@ const HomeMain = () => {
   };
 
   const generateDocument = () => {
-    console.log("Generating document...");
     const selectedQuestions = questions.filter((q) => q.selected);
 
     if (selectedQuestions.length === 0) {
@@ -59,15 +57,11 @@ const HomeMain = () => {
       return;
     }
 
-    console.log("Selected questions:", selectedQuestions);
-
     loadFile("/template.docx", function (error, content) {
       if (error) {
         console.error("Error loading template:", error);
         throw error;
       }
-
-      console.log("Template loaded successfully");
 
       const zip = new PizZip(content);
       const doc = new Docxtemplater(zip, {
@@ -76,6 +70,14 @@ const HomeMain = () => {
       });
 
       const data = {};
+      let questionData = "";
+
+      // Static placeholders for selected questions
+      data.question = "Question";
+      data.answer = "Answer";
+      data.solution = "Solution";
+
+      // Dynamic placeholders for selected questions
       selectedQuestions.forEach((question, index) => {
         data[`question${index + 1}`] = htmFuc(question.question);
         data[`answer${index + 1}`] = htmFuc(question.answer);
@@ -83,11 +85,30 @@ const HomeMain = () => {
       });
 
       // Remove placeholders for unselected questions from the data
-      for (let i = selectedQuestions.length + 1; i <= 10; i++) {
+      const remainingPlaceholders = 100 - selectedQuestions.length;
+      for (
+        let i = selectedQuestions.length + 1;
+        i <= selectedQuestions.length + remainingPlaceholders;
+        i++
+      ) {
         data[`question${i}`] = "";
         data[`answer${i}`] = "";
         data[`solution${i}`] = "";
       }
+
+      // Concatenate data for selected questions into a single string
+      selectedQuestions.forEach((question, index) => {
+        questionData += `Question ${index + 1}: ${htmFuc(question.question)}\n`;
+        questionData += `Answer ${index + 1}: ${htmFuc(question.answer)}\n`;
+        questionData += `Solution ${index + 1}: ${htmFuc(
+          question.solution
+        )}\n\n`;
+      });
+
+      // Remove trailing empty lines
+      questionData = questionData.trimRight();
+
+      data["questions"] = questionData;
 
       doc.setData(data);
       doc.render();
