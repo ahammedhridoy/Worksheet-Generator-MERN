@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./../../context/authcontext";
 import { Link, useNavigate } from "react-router-dom";
 import { QuestionContext } from "./../../context/questionContext";
@@ -20,6 +20,7 @@ const Dashboard = () => {
   const { user, token } = useContext(AuthContext);
   const { questions, fetchQuestions } = useContext(QuestionContext);
   const navigate = useNavigate();
+  const [visible, setVisible] = useState(5);
   useEffect(() => {
     if (!user || !token) {
       navigate("/");
@@ -47,9 +48,14 @@ const Dashboard = () => {
     fetchQuestions();
   }, []);
 
+  // Function to load more posts
+  const loadMore = () => {
+    setVisible((prevVisible) => prevVisible + 5);
+  };
+
   return (
     <div className="p-4 dashboard w-[100%]">
-      {questions?.map((q, index) => (
+      {questions.slice(0, visible)?.map((q, index) => (
         <div
           className="flex-col md:flex-row flex mb-4 items-center justify-between gap-2 p-2 rounded-sm shadow-lg bg-[var(--color-green)]"
           key={index}
@@ -87,6 +93,15 @@ const Dashboard = () => {
           </div>
         </div>
       ))}
+      {questions.length > visible ? (
+        <div className="mt-4 text-center">
+          <Button onClick={loadMore}>Load More</Button>
+        </div>
+      ) : (
+        <div className="mt-4 text-2xl font-semibold text-center">
+          No More Questions Found
+        </div>
+      )}
     </div>
   );
 };

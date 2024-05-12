@@ -2,7 +2,7 @@ import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 import PizZipUtils from "pizzip/utils/index.js";
 import { saveAs } from "file-saver";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { QuestionContext } from "./../../context/questionContext"; // Assuming the path is correct
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,6 +14,7 @@ function loadFile(url, callback) {
 }
 
 const HomeMain = () => {
+  const [visible, setVisible] = useState(10);
   const {
     questions,
     setQuestions,
@@ -39,8 +40,9 @@ const HomeMain = () => {
         (match, charCode) => String.fromCharCode(charCode) // Decode HTML entities
       )
       // Replace paragraph tags with line breaks
-      .replace(/<p[^>]*>/g, "\n\n") // Match any type of <p> tag and replace with two line breaks
-      .replace(/<\/p>/g, "") // Remove closing </p> tags
+      .replace(/<p[^>]*>/g, "") // Match any type of <p> tag and replace with two line breaks
+      .replace(/<\/p>/g, "\n") // Remove closing </p> tags
+      .replace(/<\/h2>/g, "\n") // Remove closing </p> tags
       // Remove specific tags (img, strong, etc.)
       .replace(/<img[^>]*>/g, "") // Remove image tags
       .replace(/<strong[^>]*>(.*?)<\/strong>/g, "$1") // Remove strong tags and keep content
@@ -50,6 +52,7 @@ const HomeMain = () => {
   };
 
   const generateDocument = () => {
+    // console.log("Generating document...");
     const selectedQuestions = questions.filter((q) => q.selected);
 
     if (selectedQuestions.length === 0) {
@@ -63,6 +66,8 @@ const HomeMain = () => {
         throw error;
       }
 
+      // console.log("Template loaded successfully");
+
       const zip = new PizZip(content);
       const doc = new Docxtemplater(zip, {
         paragraphLoop: true,
@@ -73,9 +78,14 @@ const HomeMain = () => {
       let questionData = "";
 
       // Static placeholders for selected questions
-      data.question = "Question";
-      data.answer = "Answer";
-      data.solution = "Solution";
+      selectedQuestions.forEach((question, index) => {
+        data[`question${index + 1}_title`] = `Question: ${index + 1}`;
+        data[`answer${index + 1}_title`] = `Answer: ${index + 1}`;
+        data[`solution${index + 1}_title`] = `Solution: ${index + 1}`;
+        data[
+          `horizontal${index + 1}_line`
+        ] = `________________________________________________`;
+      });
 
       // Dynamic placeholders for selected questions
       selectedQuestions.forEach((question, index) => {
@@ -91,6 +101,10 @@ const HomeMain = () => {
         i <= selectedQuestions.length + remainingPlaceholders;
         i++
       ) {
+        data[`question${i}_title`] = "";
+        data[`answer${i}_title`] = "";
+        data[`solution${i}_title`] = "";
+        data[`horizontal${i}_line`] = "";
         data[`question${i}`] = "";
         data[`answer${i}`] = "";
         data[`solution${i}`] = "";
@@ -98,15 +112,13 @@ const HomeMain = () => {
 
       // Concatenate data for selected questions into a single string
       selectedQuestions.forEach((question, index) => {
-        questionData += `Question ${index + 1}: ${htmFuc(question.question)}\n`;
-        questionData += `Answer ${index + 1}: ${htmFuc(question.answer)}\n`;
-        questionData += `Solution ${index + 1}: ${htmFuc(
-          question.solution
-        )}\n\n`;
+        questionData += `Question ${index + 1}: ${htmFuc(question.question)}`;
+        questionData += `Answer ${index + 1}: ${htmFuc(question.answer)}`;
+        questionData += `Solution ${index + 1}: ${htmFuc(question.solution)}`;
       });
 
       // Remove trailing empty lines
-      questionData = questionData.trimRight();
+      questionData = questionData.trimEnd();
 
       data["questions"] = questionData;
 
@@ -119,13 +131,18 @@ const HomeMain = () => {
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
 
-      console.log("Document generated successfully");
+      // console.log("Document generated successfully");
 
       saveAs(out, "output.docx");
     });
   };
 
   const selectedCount = questions.filter((q) => q.selected).length;
+
+  // Function to load more posts
+  const loadMore = () => {
+    setVisible((prevVisible) => prevVisible + 10);
+  };
 
   return (
     <div className="">
@@ -143,10 +160,10 @@ const HomeMain = () => {
             <>
               {filteredQuestions ? (
                 <>
-                  {filteredQuestions.map((q, index) => (
+                  {filteredQuestions.slice(0, visible).map((q, index) => (
                     <div className="mb-4" key={index}>
                       <Alert>
-                        <div className="flex items-center my-2 space-x-2 q-check text-end">
+                        <div className="flex items-center my-4 space-x-2 q-check text-end">
                           <input
                             type="checkbox"
                             className="w-5 h-5 cursor-pointer"
@@ -218,10 +235,10 @@ const HomeMain = () => {
                 </>
               ) : (
                 <>
-                  {questions.map((q, index) => (
+                  {questions.slice(0, visible).map((q, index) => (
                     <div className="mb-4" key={index}>
                       <Alert>
-                        <div className="flex items-center my-2 space-x-2 q-check text-end">
+                        <div className="flex items-center my-4 space-x-2 q-check text-end">
                           <input
                             type="checkbox"
                             className="w-5 h-5 cursor-pointer"
@@ -288,6 +305,15 @@ const HomeMain = () => {
           {noQuestionsFound && (
             <div className="mt-4 text-center">
               <Button onClick={handleReset}>Reset Filter</Button>
+            </div>
+          )}
+          {questions.length > visible || filteredQuestions.length > visible ? (
+            <div className="mt-4 text-center">
+              <Button onClick={loadMore}>Load More</Button>
+            </div>
+          ) : (
+            <div className="mt-4 text-2xl font-semibold text-center">
+              No More Questions Found
             </div>
           )}
         </div>
