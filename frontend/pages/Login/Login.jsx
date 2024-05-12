@@ -13,12 +13,14 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./../../context/authcontext";
 import apiRequest from "./../../Config/config";
 import toast, { Toaster } from "react-hot-toast";
+import { QuestionContext } from "./../../context/questionContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { getUserAndTokenFromCookie, user, setUser, setToken, token } =
     useContext(AuthContext);
+  const { fetchQuestions } = useContext(QuestionContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,6 +49,7 @@ const Login = () => {
       getUserAndTokenFromCookie();
       if (response?.status === 200) {
         toast.success("Login Successful");
+        fetchQuestions();
         setTimeout(() => {
           navigate("/");
         }, 2000);

@@ -13,7 +13,6 @@ import toast, { Toaster } from "react-hot-toast";
 import apiRequest from "./../../Config/config";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./../../context/authcontext";
-import axios from "axios";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,7 +36,7 @@ const ForgotPassword = () => {
       console.log(res);
     } catch (error) {
       console.log(error);
-      const { message } = error.response?.data;
+      const message = error.response?.data;
       toast.error(message);
     } finally {
       setLoading(false);

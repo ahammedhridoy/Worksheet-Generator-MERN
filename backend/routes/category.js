@@ -30,6 +30,5 @@ categoryRouter.get(
   adminAuthMiddleware,
   CateogryController.show
 );
-// TODO: Implement the rest of the routes
 
 module.exports = categoryRouter;

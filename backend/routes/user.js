@@ -5,7 +5,7 @@ const adminAuthMiddleware = require("../middlewares/adminAuth");
 
 const userRouter = express.Router();
 
-userRouter.get("/", UserController.index);
+userRouter.get("/", authMiddleware, adminAuthMiddleware, UserController.index);
 userRouter.delete(
   "/:id",
   authMiddleware,

@@ -28,6 +28,7 @@ const AddUser = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("");
   const { user, token, fetchUsers } = useContext(AuthContext);
+
   const navigate = useNavigate();
   useEffect(() => {
     if (!user || (user && user.role !== "ADMIN") || !token) {

@@ -21,7 +21,7 @@ const Dashboard = () => {
   const { questions, fetchQuestions } = useContext(QuestionContext);
   const navigate = useNavigate();
   useEffect(() => {
-    if (!user || (user && user.role !== "ADMIN") || !token) {
+    if (!user || !token) {
       navigate("/");
     }
   }, [user, token]);

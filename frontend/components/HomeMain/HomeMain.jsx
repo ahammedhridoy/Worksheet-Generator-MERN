@@ -162,7 +162,7 @@ const HomeMain = () => {
                             Select Question
                           </label>
                         </div>
-                        <div className="mb-4">
+                        <div className="mb-4 question-div">
                           <AlertTitle className="text-2xl">
                             Question:
                           </AlertTitle>
@@ -178,7 +178,8 @@ const HomeMain = () => {
                             }}
                           ></AlertDescription>
                         </div>
-                        <div className="mb-4">
+                        <hr className="my-3" />
+                        <div className="mb-4 answer-div">
                           <AlertTitle className="text-2xl">Answer:</AlertTitle>
                           <AlertDescription
                             className="answer-text"
@@ -187,7 +188,8 @@ const HomeMain = () => {
                             }}
                           ></AlertDescription>
                         </div>
-                        <div className="mb-4">
+                        <hr className="my-3" />
+                        <div className="mb-4 solution-div">
                           <AlertTitle className="text-2xl">
                             Solution:
                           </AlertTitle>
@@ -235,7 +237,7 @@ const HomeMain = () => {
                             Select Question
                           </label>
                         </div>
-                        <div className="mb-4">
+                        <div className="mb-4 question-div">
                           <AlertTitle className="text-2xl">
                             Question:
                           </AlertTitle>
@@ -251,7 +253,8 @@ const HomeMain = () => {
                             }}
                           ></AlertDescription>
                         </div>
-                        <div className="mb-4">
+                        <hr className="my-3" />
+                        <div className="mb-4 answer-div">
                           <AlertTitle className="text-2xl">Answer:</AlertTitle>
                           <AlertDescription
                             className="answer-text"
@@ -260,7 +263,8 @@ const HomeMain = () => {
                             }}
                           ></AlertDescription>
                         </div>
-                        <div className="mb-4">
+                        <hr className="my-3" />
+                        <div className="mb-4 solution-div">
                           <AlertTitle className="text-2xl">
                             Solution:
                           </AlertTitle>

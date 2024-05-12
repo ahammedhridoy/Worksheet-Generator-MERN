@@ -34,9 +34,11 @@ const Header = () => {
           <h1>Logo</h1>
         </div>
         <div className="flex gap-4 text-white right">
-          <Link to={"/"} className="link">
-            Home
-          </Link>
+          {user && (
+            <Link to={"/"} className="link">
+              Home
+            </Link>
+          )}
           {user ? (
             <>
               {user && user.role == "ADMIN" && (

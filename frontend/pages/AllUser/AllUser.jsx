@@ -18,20 +18,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "./../../context/authcontext";
 import apiRequest from "./../../Config/config";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AllUser = () => {
-  const { token, users, fetchUsers } = useContext(AuthContext);
+  const { token, users, user, fetchUsers } = useContext(AuthContext);
 
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (!user || !token) {
-  //     navigate("/");
-  //   }
-  // }, [user, token]);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!user || (user && user.role !== "ADMIN") || !token) {
+      navigate("/");
+    }
+  }, [user, token]);
 
   //   Delete User
   const deleteUser = async (userId) => {

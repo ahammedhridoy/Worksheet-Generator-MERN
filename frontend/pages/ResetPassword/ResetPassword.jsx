@@ -24,11 +24,6 @@ const ResetPassword = () => {
     ?.split(/reset-password/)[1]
     .split("%")[0]
     .split("/")[1];
-  // useEffect(() => {
-  //   if (user) {
-  //     navigate("/");
-  //   }
-  // }, []);
 
   // Reset password
   const handleSubmit = async () => {
