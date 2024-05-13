@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import toast from "react-hot-toast";
 import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 function loadFile(url, callback) {
   PizZipUtils.getBinaryContent(url, callback);
@@ -196,27 +203,45 @@ const HomeMain = () => {
                           ></AlertDescription>
                         </div>
                         <hr className="my-3" />
-                        <div className="mb-4 answer-div">
-                          <AlertTitle className="text-2xl">Answer:</AlertTitle>
-                          <AlertDescription
-                            className="answer-text"
-                            dangerouslySetInnerHTML={{
-                              __html: q ? q.answer : "",
-                            }}
-                          ></AlertDescription>
-                        </div>
-                        <hr className="my-3" />
-                        <div className="mb-4 solution-div">
-                          <AlertTitle className="text-2xl">
-                            Solution:
-                          </AlertTitle>
-                          <AlertDescription
-                            className="solution-text"
-                            dangerouslySetInnerHTML={{
-                              __html: q ? q.solution : "",
-                            }}
-                          ></AlertDescription>
-                        </div>
+                        <Accordion type="single" collapsible>
+                          <AccordionItem value="item-1">
+                            <AccordionTrigger>
+                              <AlertTitle className="text-2xl">
+                                Answer:
+                              </AlertTitle>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <div className="mb-4 answer-div">
+                                <AlertDescription
+                                  className="answer-text"
+                                  dangerouslySetInnerHTML={{
+                                    __html: q ? q.answer : "",
+                                  }}
+                                ></AlertDescription>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+
+                        <Accordion type="single" collapsible>
+                          <AccordionItem value="item-1">
+                            <AccordionTrigger>
+                              <AlertTitle className="text-2xl">
+                                Solution:
+                              </AlertTitle>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <div className="my-3 solution-div">
+                                <AlertDescription
+                                  className="solution-text"
+                                  dangerouslySetInnerHTML={{
+                                    __html: q ? q.solution : "",
+                                  }}
+                                ></AlertDescription>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
                       </Alert>
                     </div>
                   ))}
@@ -249,7 +274,7 @@ const HomeMain = () => {
                           />
                           <label
                             htmlFor="checkbox"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 "
                           >
                             Select Question
                           </label>
@@ -271,27 +296,45 @@ const HomeMain = () => {
                           ></AlertDescription>
                         </div>
                         <hr className="my-3" />
-                        <div className="mb-4 answer-div">
-                          <AlertTitle className="text-2xl">Answer:</AlertTitle>
-                          <AlertDescription
-                            className="answer-text"
-                            dangerouslySetInnerHTML={{
-                              __html: q ? q.answer : "",
-                            }}
-                          ></AlertDescription>
-                        </div>
-                        <hr className="my-3" />
-                        <div className="mb-4 solution-div">
-                          <AlertTitle className="text-2xl">
-                            Solution:
-                          </AlertTitle>
-                          <AlertDescription
-                            className="solution-text"
-                            dangerouslySetInnerHTML={{
-                              __html: q ? q.solution : "",
-                            }}
-                          ></AlertDescription>
-                        </div>
+                        <Accordion type="single" collapsible>
+                          <AccordionItem value="item-1">
+                            <AccordionTrigger>
+                              <AlertTitle className="text-2xl ">
+                                Answer:
+                              </AlertTitle>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <div className="mb-4 answer-div">
+                                <AlertDescription
+                                  className="answer-text"
+                                  dangerouslySetInnerHTML={{
+                                    __html: q ? q.answer : "",
+                                  }}
+                                ></AlertDescription>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+
+                        <Accordion type="single" collapsible>
+                          <AccordionItem value="item-1">
+                            <AccordionTrigger>
+                              <AlertTitle className="text-2xl">
+                                Solution:
+                              </AlertTitle>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <div className="my-3 solution-div">
+                                <AlertDescription
+                                  className="solution-text"
+                                  dangerouslySetInnerHTML={{
+                                    __html: q ? q.solution : "",
+                                  }}
+                                ></AlertDescription>
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
                       </Alert>
                     </div>
                   ))}
