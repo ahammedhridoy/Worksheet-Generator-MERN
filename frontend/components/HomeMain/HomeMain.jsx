@@ -82,6 +82,9 @@ const HomeMain = () => {
       });
 
       const data = {};
+      // TODO: Replace with actual data
+      // data.school_name = "Example School";
+      // data.exam_name = "Example Exam";
       let questionData = "";
 
       // Static placeholders for selected questions
