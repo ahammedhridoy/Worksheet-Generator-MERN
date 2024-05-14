@@ -23,9 +23,9 @@ const Dashboard = () => {
   const [visible, setVisible] = useState(5);
   useEffect(() => {
     if (!user || !token) {
-      navigate("/");
+      navigate("/dashboard");
     }
-  }, [user, token]);
+  }, []);
 
   // Delete Question
   const deleteQuestion = async (id) => {

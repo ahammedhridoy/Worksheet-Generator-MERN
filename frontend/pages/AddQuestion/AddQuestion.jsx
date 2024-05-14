@@ -51,7 +51,7 @@ const AddQuestion = () => {
 
   const { user, token } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { category } = useContext(QuestionContext);
+  const { category, fetchQuestions } = useContext(QuestionContext);
 
   useEffect(() => {
     // setContextCategory(category);
@@ -79,6 +79,7 @@ const AddQuestion = () => {
         },
       });
       toast.success(data.message);
+      fetchQuestions();
       // navigate to the dashboard page
       setTimeout(() => {
         navigate("/dashboard");
@@ -90,6 +91,7 @@ const AddQuestion = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="my-4 add-question w-[90%] md:w-[80%]">
       <form

@@ -49,9 +49,22 @@ const HomeMain = () => {
       // Replace paragraph tags with line breaks
       .replace(/<p[^>]*>/g, "") // Match any type of <p> tag and replace with two line breaks
       .replace(/<\/p>/g, "\n") // Remove closing </p> tags
-      .replace(/<\/h2>/g, "\n") // Remove closing </p> tags
+      .replace(/<\/h2>/g, "\n") //
+      .replace(/<\/h1>/g, "\n") //
+      .replace(/<\/h3>/g, "\n") //
+      .replace(/<\/h4>/g, "\n") //
+      .replace(/<\/h5>/g, "\n") //
+      .replace(/<\/h6>/g, "\n") //
       // Remove specific tags (img, strong, etc.)
       .replace(/<img[^>]*>/g, "") // Remove image tags
+      .replace(/<li[^>]*>(.*?)<\/li>/g, function (match, content) {
+        if (content.trim() !== "") {
+          // Check if content is not empty
+          return "\n• " + content.replace(/<br[^>]*>/g, "\n"); // Replace <br> with newlines
+        } else {
+          return ""; // Remove empty list items
+        }
+      })
       .replace(/<strong[^>]*>(.*?)<\/strong>/g, "$1") // Remove strong tags and keep content
       .replace(/<[^>]+>/g, ""); // Remove all other HTML tags
 
