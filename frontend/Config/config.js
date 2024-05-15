@@ -1,9 +1,7 @@
 import axios from "axios";
-import { AuthContext } from "../context/authcontext";
-import { useContext } from "react";
 
 // Base URL setup
-const URL = "http://localhost:3000/api/v1";
+const URL = import.meta.env.VITE_URL;
 
 export const publicRequest = axios.create({
   baseURL: URL,

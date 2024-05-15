@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "docxtemplater": "^3.47.1",
+    "dotenv": "^16.4.5",
     "file-saver": "^2.0.5",
     "html-to-docx": "^1.8.0",
     "html-to-rtf": "^2.1.0",
