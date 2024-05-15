@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 const corsOptions = {
   origin: [
-    "http://localhost:5173",
+    process.env.ORIGIN_URL,
     "http://localhost:5173/*",
     "*",
     "localhost:5173",
