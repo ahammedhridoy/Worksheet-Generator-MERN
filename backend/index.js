@@ -15,8 +15,8 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 const corsOptions = {
-  origin: "*",
-  // credentials: true,
+  origin: ["https://worksheet-generator-mern-dun.vercel.app"],
+  credentials: true,
   optionSuccessStatus: 200,
   allowedHeaders: ["Content-Type", "Authorization"],
 };
