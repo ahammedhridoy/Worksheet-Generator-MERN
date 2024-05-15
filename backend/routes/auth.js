@@ -8,8 +8,8 @@ const authRouter = express.Router();
 authRouter.post("/login", AuthController.login);
 authRouter.post(
   "/register",
-  authMiddleware,
-  adminAuthMiddleware,
+  // authMiddleware,
+  // adminAuthMiddleware,
   AuthController.register
 );
 authRouter.post("/logout", authMiddleware, AuthController.logout);
