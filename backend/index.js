@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 const corsOptions = {
   origin: "*",
-  credentials: true,
+  // credentials: true,
   optionSuccessStatus: 200,
   allowedHeaders: ["Content-Type", "Authorization"],
 };
