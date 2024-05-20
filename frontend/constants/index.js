@@ -5,7 +5,12 @@ export const modules = {
     ["bold", "italic", "underline", "strike", "blockquote"],
     [{ list: "bullet" }],
     ["clean"],
+    ["math"],
+    [{ script: "sub" }, { script: "super" }],
   ],
+  clipboard: {
+    matchVisual: true,
+  },
 };
 
 export const formats = [
@@ -18,4 +23,7 @@ export const formats = [
   "list",
   "bullet",
   "indent",
+  "formula",
+  "clean",
+  "math",
 ];
