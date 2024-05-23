@@ -1,4 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
+import ReactQuill, { Quill } from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { useContext, useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Button } from "@/components/ui/button";
@@ -48,7 +51,6 @@ const AddQuestion = () => {
   const questionRef = useRef(null);
   const answerRef = useRef(null);
   const solutionRef = useRef(null);
-
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
