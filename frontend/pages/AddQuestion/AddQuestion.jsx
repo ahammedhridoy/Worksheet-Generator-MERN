@@ -37,6 +37,7 @@ const AddQuestion = () => {
     categoryId: null,
     subcategoryId: null,
     filterlevel: "",
+    image: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -94,7 +95,8 @@ const AddQuestion = () => {
       if (
         !createQuestion.question ||
         !createQuestion.answer ||
-        !createQuestion.solution
+        !createQuestion.solution ||
+        !createQuestion.categoryId
       )
         return toast.error("All fields are required");
 
@@ -105,6 +107,10 @@ const AddQuestion = () => {
       formData.append("categoryId", createQuestion.categoryId);
       formData.append("subcategoryId", createQuestion.subcategoryId);
       formData.append("filterlevel", createQuestion.filterlevel);
+
+      if (createQuestion.image) {
+        formData.append("image", createQuestion.image);
+      }
 
       const { data } = await apiRequest.post(`/questions`, formData, {
         headers: {
