@@ -25,7 +25,7 @@ class CateogryController {
   static async store(req, res) {
     const { name } = req.body;
     try {
-      if (!name) return;
+      if (!name) return res.status(400).json({ error: "Name is required" });
 
       const category = await prisma.category.create({
         data: {

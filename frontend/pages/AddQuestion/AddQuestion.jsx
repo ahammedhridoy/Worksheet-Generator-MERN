@@ -1,3 +1,6 @@
+import { useContext, useEffect, useRef, useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,16 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useContext, useEffect, useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { Input } from "@/components/ui/input";
 import { AuthContext } from "./../../context/authcontext";
+import { QuestionContext } from "./../../context/questionContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import apiRequest from "./../../Config/config";
-import { QuestionContext } from "./../../context/questionContext";
-import { formats, modules } from "../../constants";
-import { Input } from "@/components/ui/input";
+import katex from "katex";
+window.katex = katex;
 
 const AddQuestion = () => {
   const [createQuestion, setCreateQuestion] = useState({
@@ -35,32 +36,55 @@ const AddQuestion = () => {
     filterlevel: "",
   });
 
-  const formData = new FormData();
-
-  formData.append("question", createQuestion.question);
-  formData.append("answer", createQuestion.answer);
-  formData.append("solution", createQuestion.solution);
-  formData.append("categoryId", createQuestion.categoryId);
-  formData.append("subcategoryId", createQuestion.subcategoryId);
-  formData.append("filterlevel", createQuestion.filterlevel);
-
   const [loading, setLoading] = useState(false);
-  const [categoryState, setCategoryState] = useState(""); // our category state
+  const [categoryState, setCategoryState] = useState("");
   const [subCategoryState, setSubCategoryState] = useState("");
   const [subCategory, setSubCategory] = useState({});
 
   const { user, token } = useContext(AuthContext);
-  const navigate = useNavigate();
   const { category, fetchQuestions } = useContext(QuestionContext);
+  const navigate = useNavigate();
+
+  const questionRef = useRef(null);
+  const answerRef = useRef(null);
+  const solutionRef = useRef(null);
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ list: "bullet" }],
+      ["clean"],
+      ["math"],
+      ["formula"],
+      [{ script: "sub" }, { script: "super" }],
+    ],
+    clipboard: {
+      matchVisual: true,
+    },
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "formula",
+    "clean",
+    "math",
+  ];
 
   useEffect(() => {
-    // setContextCategory(category);
     if (!user || (user && user.role !== "ADMIN") || !token) {
       navigate("/");
     }
-  }, [user, token]);
+  }, [user, token, navigate]);
 
-  // Add the question
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -69,18 +93,27 @@ const AddQuestion = () => {
       if (
         !createQuestion.question ||
         !createQuestion.answer ||
-        !createQuestion.solution
+        !createQuestion.solution ||
+        !createQuestion.categoryId
       )
         return toast.error("All fields are required");
 
-      const { data } = await apiRequest.post(`/questions`, createQuestion, {
+      const formData = new FormData();
+      formData.append("question", createQuestion.question);
+      formData.append("answer", createQuestion.answer);
+      formData.append("solution", createQuestion.solution);
+      formData.append("categoryId", createQuestion.categoryId);
+      formData.append("subcategoryId", createQuestion.subcategoryId);
+      formData.append("filterlevel", createQuestion.filterlevel);
+
+      const { data } = await apiRequest.post(`/questions`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+
       toast.success(data.message);
       fetchQuestions();
-      // navigate to the dashboard page
       setTimeout(() => {
         navigate("/dashboard");
       }, 2000);
@@ -124,11 +157,13 @@ const AddQuestion = () => {
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="question">Question</Label>
+
                 <ReactQuill
+                  ref={questionRef}
+                  theme="snow"
                   modules={modules}
                   formats={formats}
                   className="quill"
-                  theme="snow"
                   value={createQuestion.question}
                   onChange={(content) => {
                     setCreateQuestion({ ...createQuestion, question: content });
@@ -138,10 +173,11 @@ const AddQuestion = () => {
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="answer">Answer</Label>
                 <ReactQuill
+                  ref={answerRef}
+                  theme="snow"
                   modules={modules}
                   formats={formats}
                   className="quill"
-                  theme="snow"
                   value={createQuestion.answer}
                   onChange={(content) => {
                     setCreateQuestion({ ...createQuestion, answer: content });
@@ -151,10 +187,11 @@ const AddQuestion = () => {
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="solution">Solution</Label>
                 <ReactQuill
+                  ref={solutionRef}
+                  theme="snow"
                   modules={modules}
                   formats={formats}
                   className="quill"
-                  theme="snow"
                   value={createQuestion.solution}
                   onChange={(content) => {
                     setCreateQuestion({ ...createQuestion, solution: content });
