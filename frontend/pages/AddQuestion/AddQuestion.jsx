@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import ReactQuill, { Quill } from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,11 +24,8 @@ import { QuestionContext } from "./../../context/questionContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import apiRequest from "./../../Config/config";
-import MathBlot from "./../../constants/MathBlot";
 import katex from "katex";
 window.katex = katex;
-
-Quill.register(MathBlot);
 
 const AddQuestion = () => {
   const [createQuestion, setCreateQuestion] = useState({
@@ -59,6 +57,7 @@ const AddQuestion = () => {
       [{ list: "bullet" }],
       ["clean"],
       ["math"],
+      ["formula"],
       [{ script: "sub" }, { script: "super" }],
     ],
     clipboard: {
@@ -117,6 +116,7 @@ const AddQuestion = () => {
           "Content-Type": "multipart/form-data",
         },
       });
+
       toast.success(data.message);
       fetchQuestions();
       setTimeout(() => {
@@ -162,6 +162,7 @@ const AddQuestion = () => {
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="question">Question</Label>
+
                 <ReactQuill
                   ref={questionRef}
                   theme="snow"

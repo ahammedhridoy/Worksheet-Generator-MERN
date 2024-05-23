@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/accordion";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import MathJaxComponent from "./../MathJaxComponent/MathJaxComponent";
 function loadFile(url, callback) {
   PizZipUtils.getBinaryContent(url, callback);
 }
@@ -166,9 +167,13 @@ const HomeMain = () => {
   const loadMore = () => {
     setVisible((prevVisible) => prevVisible + 10);
   };
+  const mathExpression = "iintlimits_A f(x,y);dx,dy";
 
   return (
     <div className="">
+      <div>
+        <h1>MathJax in React {mathExpression}</h1>
+      </div>
       <Card className="w-[100%] p-5 min-h-screen rounded-none">
         {/* Selected Question Badge */}
         <div className="flex items-center justify-start gap-4 my-4">
@@ -218,6 +223,7 @@ const HomeMain = () => {
                             }}
                           ></AlertDescription>
                         </div>
+
                         <hr className="my-3" />
                         <Accordion type="single" collapsible>
                           <AccordionItem value="item-1">
@@ -304,12 +310,9 @@ const HomeMain = () => {
                             src={`${imageUrl}/${q?.image}`}
                             alt=""
                           />
-                          <AlertDescription
-                            className="question-text"
-                            dangerouslySetInnerHTML={{
-                              __html: q ? q.question : "",
-                            }}
-                          ></AlertDescription>
+                          <AlertDescription>
+                            <MathJaxComponent htmlContent={q?.question} />
+                          </AlertDescription>
                         </div>
                         <hr className="my-3" />
                         <Accordion type="single" collapsible>
@@ -358,6 +361,7 @@ const HomeMain = () => {
               )}
             </>
           )}
+
           {!noQuestionsFound && (
             <Button onClick={generateDocument}>Generate</Button>
           )}

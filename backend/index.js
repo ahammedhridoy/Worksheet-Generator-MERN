@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
-// const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 const userRouter = require("./routes/user");
 const questionRouter = require("./routes/question");
 const categoryRouter = require("./routes/category");
@@ -14,8 +14,9 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(express.static("public"));
 const corsOptions = {
-  origin: "https://worksheet-generator-mern.vercel.app",
+  origin: "http://localhost:5173",
   credentials: true,
   optionSuccessStatus: 200,
   allowedHeaders: ["Content-Type", "Authorization"],
