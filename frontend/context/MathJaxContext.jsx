@@ -1,5 +1,5 @@
 // MathJaxContext.js
-import React, { createContext, useEffect, useRef } from "react";
+import { createContext, useEffect, useRef } from "react";
 
 export const MathJaxContext = createContext();
 

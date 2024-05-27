@@ -6,7 +6,7 @@ export const modules = {
     ["bold", "italic", "underline", "strike", "blockquote"],
     [{ list: "bullet" }],
     ["clean"],
-    ["math"],
+    ["formula"],
     [{ script: "sub" }, { script: "super" }],
   ],
   clipboard: {
@@ -26,5 +26,4 @@ export const formats = [
   "indent",
   "formula",
   "clean",
-  "math",
 ];

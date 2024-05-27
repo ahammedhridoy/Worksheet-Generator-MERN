@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.13.0",
+    "@cloudinary/url-gen": "^1.19.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -20,9 +22,14 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@types/quill": "^2.0.14",
     "axios": "^1.6.8",
+    "better-react-mathjax": "^2.0.3",
     "class-variance-authority": "^0.7.0",
+    "cloudinary": "^2.2.0",
+    "cloudinary-core": "^2.13.1",
+    "cloudinary-react": "^1.8.1",
     "clsx": "^2.1.1",
-    "docxtemplater": "^3.47.1",
+    "docxtemplater": "^3.47.4",
+    "docxtemplater-image-module-free": "^1.1.1",
     "dotenv": "^16.4.5",
     "file-saver": "^2.0.5",
     "html-to-docx": "^1.8.0",
@@ -30,8 +37,10 @@
     "jszip": "^3.10.1",
     "katex": "^0.16.10",
     "mathjax": "^3.2.2",
+    "mathjax-full": "^3.2.2",
     "mathjax-node": "^2.1.1",
     "mathml-to-latex": "^1.4.0",
+    "mathml2omml": "^0.4.0",
     "pizzip": "^3.1.7",
     "quill": "^2.0.2",
     "react": "^18.2.0",
@@ -45,7 +54,8 @@
     "react-router-dom": "^6.23.0",
     "svg-to-img": "^2.0.9",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

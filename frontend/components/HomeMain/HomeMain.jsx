@@ -14,15 +14,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
+import katex from "katex";
+window.katex = katex;
+import "katex/dist/katex.min.css";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import MathJaxComponent from "./../MathJaxComponent/MathJaxComponent";
+
 function loadFile(url, callback) {
   PizZipUtils.getBinaryContent(url, callback);
 }
 
 const HomeMain = () => {
   const [visible, setVisible] = useState(10);
+
   const {
     questions,
     setQuestions,
@@ -40,40 +43,7 @@ const HomeMain = () => {
     });
   };
 
-  const htmFuc = (html) => {
-    const processedHtml = html
-      .replace(/&nbsp;/g, " ") // Replace non-breaking spaces
-      .replace(
-        /&#(\d+);/g,
-        (match, charCode) => String.fromCharCode(charCode) // Decode HTML entities
-      )
-      // Replace paragraph tags with line breaks
-      .replace(/<p[^>]*>/g, "") // Match any type of <p> tag and replace with two line breaks
-      .replace(/<\/p>/g, "\n") // Remove closing </p> tags
-      .replace(/<\/h2>/g, "\n") //
-      .replace(/<\/h1>/g, "\n") //
-      .replace(/<\/h3>/g, "\n") //
-      .replace(/<\/h4>/g, "\n") //
-      .replace(/<\/h5>/g, "\n") //
-      .replace(/<\/h6>/g, "\n") //
-      // Remove specific tags (img, strong, etc.)
-      .replace(/<img[^>]*>/g, "") // Remove image tags
-      .replace(/<li[^>]*>(.*?)<\/li>/g, function (match, content) {
-        if (content.trim() !== "") {
-          // Check if content is not empty
-          return "\n• " + content.replace(/<br[^>]*>/g, "\n"); // Replace <br> with newlines
-        } else {
-          return ""; // Remove empty list items
-        }
-      })
-      .replace(/<strong[^>]*>(.*?)<\/strong>/g, "$1") // Remove strong tags and keep content
-      .replace(/<[^>]+>/g, ""); // Remove all other HTML tags
-
-    return processedHtml;
-  };
-
-  const generateDocument = () => {
-    // console.log("Generating document...");
+  const generateDocument = async () => {
     const selectedQuestions = questions.filter((q) => q.selected);
 
     if (selectedQuestions.length === 0) {
@@ -81,13 +51,11 @@ const HomeMain = () => {
       return;
     }
 
-    loadFile("/template.docx", function (error, content) {
+    loadFile("/template.docx", async (error, content) => {
       if (error) {
         console.error("Error loading template:", error);
         throw error;
       }
-
-      // console.log("Template loaded successfully");
 
       const zip = new PizZip(content);
       const doc = new Docxtemplater(zip, {
@@ -96,29 +64,41 @@ const HomeMain = () => {
       });
 
       const data = {};
-      // TODO: Replace with actual data
-      // data.school_name = "Example School";
-      // data.exam_name = "Example Exam";
       let questionData = "";
 
-      // Static placeholders for selected questions
-      selectedQuestions.forEach((question, index) => {
+      for (const [index, question] of selectedQuestions.entries()) {
+        console.log("question: ", question.question);
+
+        const processedQuestion = extractLatexAndConvertToMathML(
+          question.question
+        );
+        const processedAnswer = extractLatexAndConvertToMathML(question.answer);
+        const processedSolution = extractLatexAndConvertToMathML(
+          question.solution
+        );
+        console.log("processedQuestion: ", processedQuestion);
+
         data[`question${index + 1}_title`] = `Question: ${index + 1}`;
         data[`answer${index + 1}_title`] = `Answer: ${index + 1}`;
         data[`solution${index + 1}_title`] = `Solution: ${index + 1}`;
-        data[
-          `horizontal${index + 1}_line`
-        ] = `________________________________________________`;
-      });
+        data[`horizontal${index + 1}_line`] =
+          "________________________________________________";
 
-      // Dynamic placeholders for selected questions
-      selectedQuestions.forEach((question, index) => {
-        data[`question${index + 1}`] = htmFuc(question.question);
-        data[`answer${index + 1}`] = htmFuc(question.answer);
-        data[`solution${index + 1}`] = htmFuc(question.solution);
-      });
+        data[`question${index + 1}`] = htmlToRtfFunction(processedQuestion);
+        data[`answer${index + 1}`] = htmlToRtfFunction(processedAnswer);
+        data[`solution${index + 1}`] = htmlToRtfFunction(processedSolution);
 
-      // Remove placeholders for unselected questions from the data
+        questionData += `Question ${index + 1}: ${htmlToRtfFunction(
+          processedQuestion
+        )}\n`;
+        questionData += `Answer ${index + 1}: ${htmlToRtfFunction(
+          processedAnswer
+        )}\n`;
+        questionData += `Solution ${index + 1}: ${htmlToRtfFunction(
+          processedSolution
+        )}\n`;
+      }
+
       const remainingPlaceholders = 100 - selectedQuestions.length;
       for (
         let i = selectedQuestions.length + 1;
@@ -134,16 +114,7 @@ const HomeMain = () => {
         data[`solution${i}`] = "";
       }
 
-      // Concatenate data for selected questions into a single string
-      selectedQuestions.forEach((question, index) => {
-        questionData += `Question ${index + 1}: ${htmFuc(question.question)}`;
-        questionData += `Answer ${index + 1}: ${htmFuc(question.answer)}`;
-        questionData += `Solution ${index + 1}: ${htmFuc(question.solution)}`;
-      });
-
-      // Remove trailing empty lines
       questionData = questionData.trimEnd();
-
       data["questions"] = questionData;
 
       doc.setData(data);
@@ -155,10 +126,67 @@ const HomeMain = () => {
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
 
-      // console.log("Document generated successfully");
-
       saveAs(out, "output.docx");
     });
+  };
+
+  const extractLatexAndConvertToMathML = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    const spans = div.querySelectorAll("span.ql-formula");
+    // console.log(spans);
+
+    spans.forEach((span) => {
+      const latex = span.getAttribute("data-value");
+      const mathml = katex.renderToString(latex, {
+        output: "mathml",
+        throwOnError: false,
+      });
+      const mathmlz = mathml
+        .replace(/<span class="katex">/g, "")
+        .replace(/<\/span>/g, "");
+      // Replace the span with its inner HTML content (the MathML)
+      span.outerHTML = mathmlz;
+    });
+
+    // Return the innerHTML of the div after replacement, excluding the outer span
+    return div.innerHTML;
+  };
+
+  const htmlToRtfFunction = (html) => {
+    const processedHtml = html
+      .replace(/&nbsp;/g, " ") // Replace non-breaking spaces
+      .replace(/&#(\d+);/g, (match, charCode) => String.fromCharCode(charCode)); // Decode HTML entities
+
+    // Replace specific HTML tags with their RTF equivalents, excluding <math> tags
+    const rtf = processedHtml
+      .replace(/<b>/g, "{\\b ") // Bold start tag
+      .replace(/<\/b>/g, "\\b0}") // Bold end tag
+      .replace(/<p>/g, "\n") // Paragraph start tag
+      .replace(/<\/p>/g, "\n") // Paragraph end tag
+      .replace(/<blockquote>/g, "\n") // blockquote start tag
+      .replace(/<\/blockquote>/g, "\n") // blockquote end tag
+      .replace(/<strong>/g, "") //
+      .replace(/<\/strong>/g, "") //
+      .replace(/<ul>/g, "") //
+      .replace(/<\/ul>/g, "") //
+      .replace(/<em>/g, "") //
+      .replace(/<\/em>/g, "") //
+      .replace(/<s>/g, "") //
+      .replace(/<\/s>/g, "") //
+      .replace(/<u>/g, "") //
+      .replace(/<\/u>/g, "") //
+      .replace(/<h[1-6]>/g, "\n") // h1-h6 start tags
+      .replace(/<\/h[1-6]>/g, "\n") // h1-h6 end tags
+      .replace(/<br\s*\/?>/g, "\n") // Replace <br> with RTF line break
+      .replace(
+        /<li[^>]*>(.*?)<\/li>/g,
+        (match, content) => `\n• ${content.trim()}\n`
+      ) // List item tag with a line break
+      .replace(/\n\s*\n/g, "\n") // Replace multiple consecutive newlines with a single newline
+      .replace(/<math[^>]*>.*?<\/math>/g, (match) => match); // Exclude <math> tags from replacement
+
+    return rtf;
   };
 
   const selectedCount = questions.filter((q) => q.selected).length;
@@ -167,13 +195,9 @@ const HomeMain = () => {
   const loadMore = () => {
     setVisible((prevVisible) => prevVisible + 10);
   };
-  const mathExpression = "iintlimits_A f(x,y);dx,dy";
 
   return (
     <div className="">
-      <div>
-        <h1>MathJax in React {mathExpression}</h1>
-      </div>
       <Card className="w-[100%] p-5 min-h-screen rounded-none">
         {/* Selected Question Badge */}
         <div className="flex items-center justify-start gap-4 my-4">
@@ -310,9 +334,15 @@ const HomeMain = () => {
                             src={`${imageUrl}/${q?.image}`}
                             alt=""
                           />
-                          <AlertDescription>
+                          {/* <AlertDescription>
                             <MathJaxComponent htmlContent={q?.question} />
-                          </AlertDescription>
+                          </AlertDescription> */}
+                          <AlertDescription
+                            className="answer-text"
+                            dangerouslySetInnerHTML={{
+                              __html: q ? q.question : "",
+                            }}
+                          ></AlertDescription>
                         </div>
                         <hr className="my-3" />
                         <Accordion type="single" collapsible>

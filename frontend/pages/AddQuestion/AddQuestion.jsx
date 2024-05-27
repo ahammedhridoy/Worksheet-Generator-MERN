@@ -24,8 +24,7 @@ import { QuestionContext } from "./../../context/questionContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import apiRequest from "./../../Config/config";
-import katex from "katex";
-window.katex = katex;
+import { formats, modules } from "./../../constants/index";
 
 const AddQuestion = () => {
   const [createQuestion, setCreateQuestion] = useState({
@@ -50,35 +49,6 @@ const AddQuestion = () => {
   const questionRef = useRef(null);
   const answerRef = useRef(null);
   const solutionRef = useRef(null);
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "bullet" }],
-      ["clean"],
-      ["math"],
-      ["formula"],
-      [{ script: "sub" }, { script: "super" }],
-    ],
-    clipboard: {
-      matchVisual: true,
-    },
-  };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "formula",
-    "clean",
-    "math",
-  ];
 
   useEffect(() => {
     if (!user || (user && user.role !== "ADMIN") || !token) {

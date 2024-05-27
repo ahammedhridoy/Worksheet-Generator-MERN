@@ -9,6 +9,7 @@ const questionRouter = require("./routes/question");
 const categoryRouter = require("./routes/category");
 const subCateogryRouter = require("./routes/subCategory");
 const authRouter = require("./routes/auth");
+const helmet = require("helmet");
 dotenv.config();
 
 const app = express();
@@ -31,6 +32,20 @@ app.use(
   })
 );
 app.use(express.json({ limit: "50mb" }));
+
+// Add CSP headers using helmet middleware
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"], // Allow data URLs for images
+      // Add more directives as needed
+    },
+  })
+);
+
 app.use(bodyParser.raw({ limit: "50mb" }));
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);

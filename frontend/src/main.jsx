@@ -19,7 +19,6 @@ import EditQuestion from "./../pages/EditQuestion/EditQuestion";
 import { Toaster } from "react-hot-toast";
 import CreateCategory from "./../pages/Creategory/CreateCategory";
 import CreateSubcategory from "./../pages/Creategory/CreateSubcategory";
-import MathJaxProvider from "../context/MathJaxContext";
 
 const router = createBrowserRouter([
   {
@@ -101,11 +100,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Toaster />
     <AuthProvider>
-      <MathJaxProvider>
-        <QuestionProvider>
-          <RouterProvider router={router} />
-        </QuestionProvider>
-      </MathJaxProvider>
+      <QuestionProvider>
+        <RouterProvider router={router} />
+      </QuestionProvider>
     </AuthProvider>
   </React.StrictMode>
 );
