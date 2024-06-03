@@ -46,6 +46,8 @@ app.use(
   })
 );
 
+// Convert SVG to base64
+
 app.use(bodyParser.raw({ limit: "50mb" }));
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);

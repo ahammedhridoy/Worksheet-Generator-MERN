@@ -13,7 +13,7 @@ export const QuestionProvider = ({ children }) => {
   const [filterLevel, setFilterLevel] = useState("");
   const [filteredQuestions, setFilteredQuestions] = useState([]);
   const [noQuestionsFound, setNoQuestionsFound] = useState(false);
-  const imageUrl = import.meta.env.VITE_IMAGE_URL;
+  const imageUrl = "http://localhost:3000/uploads";
 
   // Fetch questions from the database
   const fetchQuestions = async () => {

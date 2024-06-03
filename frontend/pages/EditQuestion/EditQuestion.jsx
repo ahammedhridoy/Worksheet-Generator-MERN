@@ -23,18 +23,23 @@ import toast from "react-hot-toast";
 import { QuestionContext } from "./../../context/questionContext";
 import { formats, modules } from "../../constants";
 import apiRequest from "../../Config/config";
+import { Input } from "@/components/ui/input";
 
 const EditQuestion = () => {
-  const { questions, category } = useContext(QuestionContext);
+  const { questions, category, fetchQuestions } = useContext(QuestionContext);
   const [qss, setQss] = useState({});
 
   const [updateQuestion, setUpdateQuestion] = useState({
     question: "",
+    question_equation: "",
     answer: "",
+    answer_equation: "",
     solution: "",
+    solution_equation: "",
     categoryId: null,
     subcategoryId: null,
     filterlevel: "",
+    image: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -47,54 +52,78 @@ const EditQuestion = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    const fetchQuestion = () => {
-      const qs = questions.find((ques) => ques.id === Number(id));
-      if (qs) {
-        setUpdateQuestion({
-          question: qs.question,
-          answer: qs.answer,
-          solution: qs.solution,
-          categoryId: qs.categoryId,
-          subcategoryId: qs.subcategoryId,
-          filterlevel: qs.filterlevel,
-        });
-        setCategoryState(qs.category?.name);
-        setQss(qs);
-      }
-    };
-    fetchQuestion();
-  }, [id]);
-  useEffect(() => {
     if (!user || (user && user.role !== "ADMIN") || !token) {
       navigate("/");
     }
   }, [user, token]);
 
-  // Add the question
-  const submitHandler = async (e) => {
+  useEffect(() => {
+    const fetchQuestion = () => {
+      const qs = questions.find((ques) => ques.id === Number(id));
+      if (qs) {
+        setUpdateQuestion({
+          question: qs.question,
+          question_equation: qs.question_equation,
+          answer: qs.answer,
+          answer_equation: qs.answer_equation,
+          solution: qs.solution,
+          solution_equation: qs.solution_equation,
+          categoryId: qs.categoryId,
+          subcategoryId: qs.subcategoryId,
+          filterlevel: qs.filterlevel,
+          image: qs.image,
+        });
+
+        setCategoryState(qs.category?.name);
+        setQss(qs);
+      }
+    };
+    fetchQuestion();
+  }, [id, questions]);
+
+  // Update the question
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    const formData = new FormData();
+    formData.append("question", updateQuestion.question);
+    formData.append("answer", updateQuestion.answer);
+    formData.append("solution", updateQuestion.solution);
+    formData.append("categoryId", updateQuestion.categoryId);
+    formData.append("subcategoryId", updateQuestion.subcategoryId);
+    formData.append("filterlevel", updateQuestion.filterlevel);
+    formData.append("question_equation", updateQuestion.question_equation);
+    formData.append("answer_equation", updateQuestion.answer_equation);
+    formData.append("solution_equation", updateQuestion.solution_equation);
+
+    if (updateQuestion.image) {
+      formData.append("image", updateQuestion.image);
+    }
+
     try {
       if (
         !updateQuestion.question ||
         !updateQuestion.answer ||
         !updateQuestion.solution
-      )
-        return toast.error("All fields are required");
+      ) {
+        toast.error("All fields are required");
+        setLoading(false);
+        return;
+      }
 
-      // return console.log("update: ", updateQuestion);
       const { data } = await apiRequest.put(
         `/questions/${Number(id)}`,
-        updateQuestion,
+        formData,
         {
           withCredentials: true,
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
         }
       );
       console.log("update data: ", data);
+      fetchQuestions();
       toast.success("Question updated successfully");
       setTimeout(() => {
         navigate("/dashboard");
@@ -109,19 +138,33 @@ const EditQuestion = () => {
 
   return (
     <div className="my-4 add-question w-[90%] md:w-[80%]">
-      <form
-        onSubmit={submitHandler}
-        encType="multipart/form-data"
-        method="post"
-      >
+      <form onSubmit={handleSubmit} encType="multipart/form-data" method="post">
         <Card className="w-[100%]">
           <CardHeader>
             <CardTitle>Edit Question</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid items-center w-full gap-4">
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                <Label htmlFor="image" name="image">
+                  Update Image (Optional)
+                </Label>
+                <Input
+                  id="imagefile"
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    setUpdateQuestion((prevState) => ({
+                      ...prevState,
+                      image: file,
+                    }));
+                  }}
+                />
+              </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="question">Question</Label>
+                <Label htmlFor="question">Question Title</Label>
                 <ReactQuill
                   modules={modules}
                   formats={formats}
@@ -134,7 +177,23 @@ const EditQuestion = () => {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="answer">Answer</Label>
+                <Label htmlFor="question">Question Equation</Label>
+                <ReactQuill
+                  modules={modules}
+                  formats={formats}
+                  className=""
+                  theme="snow"
+                  value={updateQuestion?.question_equation}
+                  onChange={(content) => {
+                    setUpdateQuestion({
+                      ...updateQuestion,
+                      question_equation: content,
+                    });
+                  }}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="answer">Answer Title</Label>
                 <ReactQuill
                   modules={modules}
                   formats={formats}
@@ -147,7 +206,23 @@ const EditQuestion = () => {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="solution">Solution</Label>
+                <Label htmlFor="answer">Answer Equation</Label>
+                <ReactQuill
+                  modules={modules}
+                  formats={formats}
+                  className=""
+                  theme="snow"
+                  value={updateQuestion?.answer_equation ?? "fail to show"}
+                  onChange={(content) => {
+                    setUpdateQuestion({
+                      ...updateQuestion,
+                      answer_equation: content,
+                    });
+                  }}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="solution">Solution Title</Label>
                 <ReactQuill
                   modules={modules}
                   formats={formats}
@@ -156,6 +231,22 @@ const EditQuestion = () => {
                   value={updateQuestion?.solution}
                   onChange={(content) => {
                     setUpdateQuestion({ ...updateQuestion, solution: content });
+                  }}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="solution">Solution Equation</Label>
+                <ReactQuill
+                  modules={modules}
+                  formats={formats}
+                  className=""
+                  theme="snow"
+                  value={updateQuestion?.solution_equation}
+                  onChange={(content) => {
+                    setUpdateQuestion({
+                      ...updateQuestion,
+                      solution_equation: content,
+                    });
                   }}
                 />
               </div>

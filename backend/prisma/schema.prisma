@@ -36,19 +36,22 @@ model Subcategory {
 }
 
 model Questions {
-  id            Int          @id @default(autoincrement())
-  question      String       @db.Text
-  question_slug String       @unique
-  answer        String       @db.Text
-  solution      String       @db.Text
-  category      Category     @relation(fields: [categoryId], references: [id])
-  categoryId    Int
-  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id])
-  subcategoryId Int?
-  filterlevel   String?
-  image         String?      @default("")
-  created_at    DateTime     @default(now())
-  updated_at    DateTime     @default(now())
+  id                Int          @id @default(autoincrement())
+  question          String       @db.Text
+  question_equation String?      @db.Text
+  question_slug     String       @unique
+  answer            String       @db.Text
+  answer_equation   String?      @db.Text
+  solution          String       @db.Text
+  solution_equation String?      @db.Text
+  category          Category     @relation(fields: [categoryId], references: [id])
+  categoryId        Int
+  subcategory       Subcategory? @relation(fields: [subcategoryId], references: [id])
+  subcategoryId     Int?
+  filterlevel       String?
+  image             String?      @default("")
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @default(now())
 }
 
 // Reset Token

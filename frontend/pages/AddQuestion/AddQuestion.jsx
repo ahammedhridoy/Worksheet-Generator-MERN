@@ -29,8 +29,11 @@ import { formats, modules } from "./../../constants/index";
 const AddQuestion = () => {
   const [createQuestion, setCreateQuestion] = useState({
     question: "",
+    question_equation: "",
     answer: "",
+    answer_equation: "",
     solution: "",
+    solution_equation: "",
     categoryId: null,
     subcategoryId: null,
     filterlevel: "",
@@ -49,6 +52,9 @@ const AddQuestion = () => {
   const questionRef = useRef(null);
   const answerRef = useRef(null);
   const solutionRef = useRef(null);
+  const question_equationRef = useRef(null);
+  const answer_equationRef = useRef(null);
+  const solution_equationRef = useRef(null);
 
   useEffect(() => {
     if (!user || (user && user.role !== "ADMIN") || !token) {
@@ -76,6 +82,9 @@ const AddQuestion = () => {
       formData.append("categoryId", createQuestion.categoryId);
       formData.append("subcategoryId", createQuestion.subcategoryId);
       formData.append("filterlevel", createQuestion.filterlevel);
+      formData.append("question_equation", createQuestion.question_equation);
+      formData.append("answer_equation", createQuestion.answer_equation);
+      formData.append("solution_equation", createQuestion.solution_equation);
 
       if (createQuestion.image) {
         formData.append("image", createQuestion.image);
@@ -131,7 +140,7 @@ const AddQuestion = () => {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="question">Question</Label>
+                <Label htmlFor="question">Question Title</Label>
 
                 <ReactQuill
                   ref={questionRef}
@@ -146,7 +155,25 @@ const AddQuestion = () => {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="answer">Answer</Label>
+                <Label htmlFor="question">Question Equation</Label>
+
+                <ReactQuill
+                  ref={question_equationRef}
+                  theme="snow"
+                  modules={modules}
+                  formats={formats}
+                  className="quill"
+                  value={createQuestion.question_equation}
+                  onChange={(content) => {
+                    setCreateQuestion({
+                      ...createQuestion,
+                      question_equation: content,
+                    });
+                  }}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="answer">Answer Title</Label>
                 <ReactQuill
                   ref={answerRef}
                   theme="snow"
@@ -160,7 +187,24 @@ const AddQuestion = () => {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="solution">Solution</Label>
+                <Label htmlFor="answer">Answer Equation</Label>
+                <ReactQuill
+                  ref={answer_equationRef}
+                  theme="snow"
+                  modules={modules}
+                  formats={formats}
+                  className="quill"
+                  value={createQuestion.answer_equation}
+                  onChange={(content) => {
+                    setCreateQuestion({
+                      ...createQuestion,
+                      answer_equation: content,
+                    });
+                  }}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="solution">Solution Title</Label>
                 <ReactQuill
                   ref={solutionRef}
                   theme="snow"
@@ -170,6 +214,23 @@ const AddQuestion = () => {
                   value={createQuestion.solution}
                   onChange={(content) => {
                     setCreateQuestion({ ...createQuestion, solution: content });
+                  }}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="solution">Solution Equation</Label>
+                <ReactQuill
+                  ref={solution_equationRef}
+                  theme="snow"
+                  modules={modules}
+                  formats={formats}
+                  className="quill"
+                  value={createQuestion.solution_equation}
+                  onChange={(content) => {
+                    setCreateQuestion({
+                      ...createQuestion,
+                      solution_equation: content,
+                    });
                   }}
                 />
               </div>

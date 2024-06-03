@@ -30,6 +30,7 @@ questionRouter.put(
   "/:id",
   authMiddleware,
   adminAuthMiddleware,
+  upload.single("image"),
   QuestionController.update
 );
 
