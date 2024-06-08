@@ -42,7 +42,6 @@ class QuestionController {
     } else {
       const fileUrl = null; // Or ""
     }
-    console.log(fileUrl);
     const catid = parseInt(categoryId);
     if (!question || !answer || !solution) {
       return res.status(400).json({ message: "All fields are required" });

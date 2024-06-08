@@ -57,38 +57,45 @@ const HomeMain = () => {
 
   const latexToSVG = (equation) => {
     try {
-      // Render LaTeX to HTML using KaTeX
-      const html = katex.renderToString(equation, {
-        throwOnError: false,
-        displayMode: true,
-      });
+      // Split the equation string using regex to capture different LaTeX equation delimiters
+      const equations = equation.split("=  ").filter((eq) => eq.trim() !== "");
 
-      // Extract the <math> element from the HTML
+      // Render each equation separately using KaTeX and add a line break after each
+      const renderedEquations = equations
+        .map((eq) => {
+          return katex.renderToString(eq.trim(), {
+            throwOnError: false,
+            displayMode: true,
+          });
+        })
+        .join("<br/>");
+
+      // Wrap the rendered equations in a div and convert to MathML
+      const htmlContent = `<div>${renderedEquations}</div>`;
       const div = document.createElement("div");
-      div.innerHTML = html;
-      const mathElement = div.querySelector(".katex-mathml > math");
+      div.innerHTML = htmlContent;
+      const mathElements = div.querySelectorAll(".katex-mathml > math");
 
-      if (!mathElement) {
+      if (mathElements.length === 0) {
         console.error("Failed to extract MathML content.");
         return Promise.reject(new Error("Failed to extract MathML content."));
       }
 
-      // Serialize the MathML content
-      const serializer = new XMLSerializer();
-      const mathmlString = serializer.serializeToString(mathElement);
+      // Combine all MathML elements into one string with breaks
+      const mathmlString = Array.from(mathElements)
+        .map((math) => math.outerHTML)
+        .join("<br/>");
 
       // Convert MathML string to SVG format
       const svgString = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-          <foreignObject width="100%" height="100%">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <foreignObject width="100%" height="500px">
             <div xmlns="http://www.w3.org/1999/xhtml">
               ${mathmlString}
             </div>
           </foreignObject>
         </svg>
       `;
-
-      // Log SVG content for debugging
 
       // Create a new image element
       const img = new Image();
@@ -175,7 +182,10 @@ const HomeMain = () => {
       const answerRTF = await htmlToRtfFunction(processedAnswer);
       const solutionRTF = await htmlToRtfFunction(processedSolution);
 
-      console.log("equationRTF: ", processedQuestionEquationRTF);
+      console.log(
+        "processedSolutionEquationRTF: ",
+        processedSolutionEquationRTF
+      );
 
       const questionSvg = await latexToBase64(processedQuestionEquationRTF);
       const answerSvg = await latexToBase64(processedAnswerEquationRTF);
@@ -230,8 +240,8 @@ const HomeMain = () => {
                 c.charCodeAt(0)
               ),
               transformation: {
-                width: 200,
-                height: 100,
+                width: 300,
+                height: 200,
               },
               spacing: {
                 after: 200,
@@ -260,8 +270,8 @@ const HomeMain = () => {
                 c.charCodeAt(0)
               ),
               transformation: {
-                width: 200,
-                height: 100,
+                width: 300,
+                height: 200,
               },
               spacing: {
                 after: 200,
@@ -290,8 +300,8 @@ const HomeMain = () => {
                 c.charCodeAt(0)
               ),
               transformation: {
-                width: 200,
-                height: 100,
+                width: 300,
+                height: 200,
               },
               spacing: {
                 after: 200,
@@ -349,9 +359,9 @@ const HomeMain = () => {
   };
 
   const htmlToRtfFunction = (html) => {
-    const processedHtml = html
-      .replace(/&nbsp;/g, " ") // Replace non-breaking spaces
-      .replace(/&#(\d+);/g, (match, charCode) => String.fromCharCode(charCode)); // Decode HTML entities
+    const processedHtml = html;
+    // .replace(/&nbsp;/g, " ") // Replace non-breaking spaces
+    // .replace(/&#(\d+);/g, (match, charCode) => String.fromCharCode(charCode)); // Decode HTML entities
 
     // Replace specific HTML tags with their RTF equivalents, excluding <math> tags
     const rtf = processedHtml
